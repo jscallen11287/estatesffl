@@ -1,0 +1,178 @@
+<script src="https://code.jquery.com/jquery-3.1.0.min.js" type="text/javascript"></script>
+<script src="https://apis.google.com/js/api.js" type="text/javascript"></script><head>
+
+<meta charset="utf-8">
+<title>RSVP</title>
+</head>
+
+<body>
+<div id="mnf">
+	<center><h1><div class="standardText">Monday Night Head Count</div></h1></center>
+    <center><h2><div class="standardText" id="attendance"></div></h2></center>
+    <div id="checkboxes"></div>
+</div> 
+
+    
+
+</body>
+<script language="javascript" type="text/javascript">
+var teams = []; 
+var entry = [];
+var willGo = 0;
+getSheet();
+postContactToGoogle();
+//updateSheet();
+
+function postContactToGoogle(purl,entry,text){
+	//var formUrl = "https://docs.google.com/forms/d/e/"+purl;
+	var formUrl = "https://docs.google.com/forms/d/e/1FAIpQLSdZtTaFWmXNlHZ-OwXgDafJbLmBAaTR0sRh9oZ9vzJ7aYLqWQ/viewform?edit2=2_ABaOnufNi3mBTWS_zG3Zz4vs-ymySYn5I5RrNj9fS50dhAMDe5cUS70KrgZClg";
+	$.ajax({
+		url: "https://docs.google.com/forms/d/e/1FAIpQLSdZtTaFWmXNlHZ-OwXgDafJbLmBAaTR0sRh9oZ9vzJ7aYLqWQ/viewform?edit2=2_ABaOnufNi3mBTWS_zG3Zz4vs-ymySYn5I5RrNj9fS50dhAMDe5cUS70KrgZClg",
+		data: {"entry.1555723091" : "Yes"},
+		type: "POST",
+		dataType: "xml",
+		statusCode: {
+			0: function (){
+				//Success message
+			},
+			200: function (){
+				//Success Message
+			}
+		}
+	});
+}
+/*function postContactToGoogle(){
+	$.ajax({
+		url: "https://docs.google.com/forms/d/e/1FAIpQLSdZtTaFWmXNlHZ-OwXgDafJbLmBAaTR0sRh9oZ9vzJ7aYLqWQ/formResponse?edit2=2_ABaOnufNi3mBTWS_zG3Zz4vs-ymySYn5I5RrNj9fS50dhAMDe5cUS70KrgZClg",
+		data: {"entry.1555723091" : "yes"},
+		type: "POST",
+		dataType: "xml",
+		statusCode: {
+			0: function (){
+				//Success message
+			},
+			200: function (){
+				//Success Message
+			}
+		}
+	});
+}
+*/
+
+function getSheet(){
+	$.ajax({
+	  url: 'https://spreadsheets.google.com/feeds/list/1VvCDPqKrRD8eh0yNHfn8ShNfYswdpxzAYyprP4ebOMQ/od6/public/values?alt=json&callback=?',
+	  dataType: 'JSON',
+	  success: function(data){
+		// use the spreadsheets
+		//console.log(data);
+		entry = [];
+		willGo = 0;
+		entry = data.feed.entry;
+		for(i=0;i<entry.length;i++){
+			console.log(entry[i]);
+			var team = {
+				"id":""+i+"",
+				"team":""+entry[i].gsx$team.$t+"",
+				"owner1":""+entry[i].gsx$owner1.$t+"",
+				"owner2":""+entry[i].gsx$owner2.$t+"",
+				"attending1":""+entry[i].gsx$attending1.$t+"",
+				"attending2":""+entry[i].gsx$attending2.$t+"",
+				"furl":""+entry[i].gsx$formurl.$t+"",
+				"entry1":""+entry[i].gsx$entry1.$t+"",	
+				"entry2":""+entry[i].gsx$entry2.$t+""	
+			}
+			teams.push(team);
+		};
+		buildInfo();  	 
+	  }
+	});
+}
+
+function buildInfo(){
+	var rsvpTable = buildTD(teams);
+	$("#checkboxes").html(rsvpTable);
+	$("#attendance").html(""+willGo+" Attending");	
+	$('.cbox').click(function(){
+		var turl = this.id;
+		var tentry = this.name;
+		if(this.checked){
+			postContactToGoogle(turl,tentry,"Yes");
+		}
+		else{
+			postContactToGoogle(turl,tentry,"No");
+		}
+	});
+}
+
+function buildTD(obj){
+    var table = "<table id='rsvpTable'>";
+     table += "<tr><th>Team</th><th>Memeber</th><th>Attending</th></tr>";
+    for(i=0;i<obj.length;i++){
+		var cb1 = "<input type='checkbox' name='"+obj[i].entry1+"' id='"+obj[i].furl+"' class='cbox' value='"+obj[i].owner1+"'>";
+		if(obj[i].attending1=="yes"){
+			willGo++;
+			cb1 = "<input type='checkbox' name='"+obj[i].entry1+"' id='"+obj[i].furl+"' class='cbox' value='"+obj[i].owner1+"' checked='checked'>";
+		}		
+		var cb2 = "<input type='checkbox' name='"+obj[i].entry2+"' id='"+obj[i].furl+"' class='cbox' value='"+obj[i].owner2+"'>";
+		if(obj[i].attending2=="yes"){
+			willGo++;
+			cb2 = "<input type='checkbox' name='"+obj[i].entry2+"' id='"+obj[i].furl+"' class='cbox' value='"+obj[i].owner2+"' checked='checked'>";
+		}
+        table += "<tr><td>"+obj[i].team+"</td><td>"+obj[i].owner1+"</br>"+obj[i].owner2+"</td><td><center>"+cb1+"</br>"+cb2+"</center></td></tr>";
+        
+    }
+    table += "</table>";
+	return table;    
+}   
+
+function jpText(text){
+	return text;
+	}
+</script>
+
+
+
+
+
+<style>
+#mnf{
+	background:white;
+	color:black;
+	width:450px;
+}
+#checkboxes{
+    height:500px;
+    overflow-y:scroll;
+}
+#rsvpTable{
+    background:white;
+	width:400px;	
+	color:black;
+}
+#rsvpTable tr th{
+	vertical-align:top;
+	white-space:nowrap;
+	text-align:left;
+	padding-left:8px;
+	padding-top:10px;
+	padding-bottom:10px;
+}
+#rsvpTable tr td{
+	vertical-align:top;
+	white-space:nowrap;
+	padding-left:8px;
+	padding-right:8px;
+	padding-bottom:20px;
+}
+#attendance{
+	padding-top:10px;
+	padding-bottom:10px;
+	border-bottom:1px black solid;
+}
+.standardText{
+	font-family:Cambria, "Hoefler Text", "Liberation Serif", Times, "Times New Roman", serif;
+}
+
+
+</style>

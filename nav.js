@@ -11,3 +11,5 @@ var window.nav = '<div id="fftitle">Estates Fantasy Football League</div>'+
 		'</ul>'+
 	'</div>';
 
+alert("loaded");
+

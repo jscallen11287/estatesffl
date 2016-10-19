@@ -1,4 +1,3 @@
-<script type="text/javascript">
 var window.nav = '<div id="fftitle">Estates Fantasy Football League</div>'+
 	'<div id="ulDiv">'+
 		'<ul id="navul">'+
@@ -11,4 +10,4 @@ var window.nav = '<div id="fftitle">Estates Fantasy Football League</div>'+
 		  '<li class="redli"><a class="reda" href="http://poolhost.com/" target="_blank">Weekly Pools</a></li>'+
 		'</ul>'+
 	'</div>';
-</script>
+

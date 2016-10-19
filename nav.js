@@ -1,5 +1,5 @@
 <script type="text/javascript">
-var nav = '<div id="fftitle">Estates Fantasy Football League</div>'+
+var window.nav = '<div id="fftitle">Estates Fantasy Football League</div>'+
 	'<div id="ulDiv">'+
 		'<ul id="navul">'+
 		 '<li><a class="normala" href="http://www.estatesffl.com/last-man-standing-1.html">Last Man Standing</a></li>'+
